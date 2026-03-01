@@ -1,0 +1,39 @@
+name: game_flutter
+description: "BlockQuest: The Crystal Saga — A 3D medieval Minecraft-style story mode game"
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  webview_flutter: ^4.10.0
+  shared_preferences: ^2.3.0
+  google_fonts: ^6.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/web/
+    - assets/web/js/
+    - assets/web/js/levels/
+    - assets/web/textures/
+    - assets/web/models/characters/
+    - assets/web/models/bosses/
+    - assets/web/models/items/
+    - assets/web/models/enemies/
+    - assets/web/models/environment/forest/
+    - assets/web/models/environment/ice/
+    - assets/web/models/environment/volcanic/
+    - assets/web/models/environment/fortress/
+    - assets/audio/
+    - assets/images/
