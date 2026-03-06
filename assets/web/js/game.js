@@ -20,9 +20,21 @@ const Game = {
         document.getElementById('loading').style.display = 'flex';
         document.getElementById('loading-fill').style.width = '20%';
 
-        // Create renderer (optimized for Android)
+        // Create renderer (OpenGL ES 3.0 via WebGL2, optimized for Android)
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl2', {
+            antialias: false,
+            alpha: false,
+            powerPreference: 'high-performance'
+        }) || canvas.getContext('webgl', {
+            antialias: false,
+            alpha: false,
+            powerPreference: 'high-performance'
+        });
         this.renderer = new THREE.WebGLRenderer({
-            antialias: false, // Better performance on Android
+            canvas: canvas,
+            context: gl,
+            antialias: false,
             alpha: false,
             powerPreference: 'high-performance'
         });

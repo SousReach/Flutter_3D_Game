@@ -86,9 +86,10 @@ const Player = {
     },
 
     spawn(spawnPoint) {
-        this.x = spawnPoint.x;
-        this.y = spawnPoint.y;
-        this.z = spawnPoint.z;
+        const safe = World.findSafeSpawn(spawnPoint);
+        this.x = safe.x;
+        this.y = safe.y;
+        this.z = safe.z;
         this.vx = 0;
         this.vy = 0;
         this.vz = 0;
@@ -150,21 +151,21 @@ const Player = {
         const newZ = this.z + this.vz * dt;
 
         // Horizontal collision (X)
-        if (!World.checkBlockCollision(newX, this.y, this.z, this.radius)) {
+        if (!World.checkBlockCollision(newX, this.y, this.z, this.radius, this.height)) {
             this.x = newX;
         } else {
             this.vx = 0;
         }
 
         // Horizontal collision (Z)
-        if (!World.checkBlockCollision(this.x, this.y, newZ, this.radius)) {
+        if (!World.checkBlockCollision(this.x, this.y, newZ, this.radius, this.height)) {
             this.z = newZ;
         } else {
             this.vz = 0;
         }
 
-        // Vertical collision (Y)
-        const groundY = World.getGroundHeight(this.x, this.z, this.radius);
+        // Vertical collision (Y) — only check blocks below player's feet + small margin
+        const groundY = World.getGroundHeight(this.x, this.z, this.radius, this.y + 0.1);
         if (newY <= groundY) {
             this.y = groundY;
             this.vy = 0;

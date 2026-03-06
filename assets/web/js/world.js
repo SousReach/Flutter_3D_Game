@@ -242,15 +242,24 @@ const World = {
     },
 
     // Check collision with blocks (simple AABB)
-    checkBlockCollision(x, y, z, radius) {
+    // playerHeight: if provided, use full body height for Y-axis and skip ground blocks
+    checkBlockCollision(x, y, z, radius, playerHeight) {
         for (const block of this.blocks) {
             const bx = block.position.x;
             const by = block.position.y;
             const bz = block.position.z;
             const half = 0.5;
 
+            const blockTop = by + half;
+            // Skip blocks at or below the player's feet (the ground they stand on)
+            if (playerHeight !== undefined && blockTop <= y + 0.05) continue;
+
+            // Y overlap: player body extends from y to y + playerHeight (or y +/- radius)
+            const bodyTop = playerHeight !== undefined ? y + playerHeight : y + radius;
+            const bodyBottom = y;
+
             if (x + radius > bx - half && x - radius < bx + half &&
-                y + radius > by - half && y - radius < by + half &&
+                bodyTop > by - half && bodyBottom < by + half &&
                 z + radius > bz - half && z - radius < bz + half) {
                 return block;
             }
@@ -259,7 +268,8 @@ const World = {
     },
 
     // Check if player is on top of a block
-    getGroundHeight(x, z, radius) {
+    // belowY: if provided, only consider blocks whose top is at or below this Y
+    getGroundHeight(x, z, radius, belowY) {
         let maxY = -Infinity;
         for (const block of this.blocks) {
             const bx = block.position.x;
@@ -269,6 +279,8 @@ const World = {
             if (x + radius > bx - half && x - radius < bx + half &&
                 z + radius > bz - half && z - radius < bz + half) {
                 const topY = block.position.y + half;
+                // Skip blocks above the player (ceilings, upper platforms)
+                if (belowY !== undefined && topY > belowY + 0.05) continue;
                 if (topY > maxY) maxY = topY;
             }
         }
@@ -300,5 +312,16 @@ const World = {
         const dz = pz - this.goalPosition.z;
         const dist = Math.sqrt(dx*dx + dz*dz);
         return dist < goalRadius;
+    },
+
+    // Find a safe spawn position (on top of the highest block at spawn x/z, below spawn Y)
+    findSafeSpawn(spawnPoint) {
+        // Use spawn Y + some headroom as the ceiling filter
+        const groundY = this.getGroundHeight(spawnPoint.x, spawnPoint.z, 0.3, spawnPoint.y);
+        return {
+            x: spawnPoint.x,
+            y: groundY > -Infinity ? groundY : spawnPoint.y,
+            z: spawnPoint.z
+        };
     }
 };
