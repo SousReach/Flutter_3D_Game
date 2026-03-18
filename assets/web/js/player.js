@@ -43,33 +43,47 @@ const Player = {
         // Create hand/weapon visible on right side of screen
         this.handGroup = new THREE.Group();
 
-        // Arm
-        const armGeo = new THREE.BoxGeometry(0.15, 0.5, 0.15);
-        const armMat = new THREE.MeshLambertMaterial({ color: 0xD2A679 }); // Skin color
-        const arm = new THREE.Mesh(armGeo, armMat);
-        arm.position.set(0, -0.1, 0);
-        this.handGroup.add(arm);
+        // Try to load sword GLB model
+        let usedModel = false;
+        if (typeof ModelLoader !== 'undefined') {
+            const swordModel = ModelLoader.getItem('sword');
+            if (swordModel) {
+                swordModel.rotation.set(0, 0, -0.5);
+                this.handGroup.add(swordModel);
+                usedModel = true;
+            }
+        }
 
-        // Sword blade
-        const bladeGeo = new THREE.BoxGeometry(0.08, 0.7, 0.04);
-        const bladeMat = new THREE.MeshLambertMaterial({ color: 0xB0BEC5, emissive: 0x78909C, emissiveIntensity: 0.1 });
-        const blade = new THREE.Mesh(bladeGeo, bladeMat);
-        blade.position.set(0, 0.5, 0);
-        this.handGroup.add(blade);
+        // Fallback to procedural geometry if model not available
+        if (!usedModel) {
+            // Arm
+            const armGeo = new THREE.BoxGeometry(0.15, 0.5, 0.15);
+            const armMat = new THREE.MeshLambertMaterial({ color: 0xD2A679 });
+            const arm = new THREE.Mesh(armGeo, armMat);
+            arm.position.set(0, -0.1, 0);
+            this.handGroup.add(arm);
 
-        // Sword handle
-        const handleGeo = new THREE.BoxGeometry(0.12, 0.15, 0.06);
-        const handleMat = new THREE.MeshLambertMaterial({ color: 0x5D4037 });
-        const handle = new THREE.Mesh(handleGeo, handleMat);
-        handle.position.set(0, 0.12, 0);
-        this.handGroup.add(handle);
+            // Sword blade
+            const bladeGeo = new THREE.BoxGeometry(0.08, 0.7, 0.04);
+            const bladeMat = new THREE.MeshLambertMaterial({ color: 0xB0BEC5, emissive: 0x78909C, emissiveIntensity: 0.1 });
+            const blade = new THREE.Mesh(bladeGeo, bladeMat);
+            blade.position.set(0, 0.5, 0);
+            this.handGroup.add(blade);
 
-        // Guard
-        const guardGeo = new THREE.BoxGeometry(0.25, 0.05, 0.08);
-        const guardMat = new THREE.MeshLambertMaterial({ color: 0xFFD600 });
-        const guard = new THREE.Mesh(guardGeo, guardMat);
-        guard.position.set(0, 0.2, 0);
-        this.handGroup.add(guard);
+            // Sword handle
+            const handleGeo = new THREE.BoxGeometry(0.12, 0.15, 0.06);
+            const handleMat = new THREE.MeshLambertMaterial({ color: 0x5D4037 });
+            const handle = new THREE.Mesh(handleGeo, handleMat);
+            handle.position.set(0, 0.12, 0);
+            this.handGroup.add(handle);
+
+            // Guard
+            const guardGeo = new THREE.BoxGeometry(0.25, 0.05, 0.08);
+            const guardMat = new THREE.MeshLambertMaterial({ color: 0xFFD600 });
+            const guard = new THREE.Mesh(guardGeo, guardMat);
+            guard.position.set(0, 0.2, 0);
+            this.handGroup.add(guard);
+        }
 
         // Position hand on right side of screen
         this.handGroup.position.set(0.45, -0.35, -0.6);

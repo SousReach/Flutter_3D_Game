@@ -81,6 +81,17 @@ const World = {
     },
 
     createCollectible(x, y, z, itemType) {
+        // Try to use a GLB model first
+        if (typeof ModelLoader !== 'undefined') {
+            const model = ModelLoader.getItem(itemType);
+            if (model) {
+                model.position.set(x + 0.5, y + 0.8, z + 0.5);
+                model.userData = { type: itemType, isCollectible: true, collected: false };
+                return model;
+            }
+        }
+
+        // Fallback to procedural geometry if model not available
         let geometry, material;
 
         switch (itemType) {
@@ -201,6 +212,11 @@ const World = {
 
         // Add ambient lighting
         this.addLighting(scene, levelData.world);
+
+        // Add environment decoration models
+        if (typeof ModelLoader !== 'undefined') {
+            ModelLoader.addEnvironmentProps(scene, levelData);
+        }
     },
 
     addLighting(scene, worldType) {

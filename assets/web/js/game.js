@@ -18,7 +18,7 @@ const Game = {
 
         // Show loading
         document.getElementById('loading').style.display = 'flex';
-        document.getElementById('loading-fill').style.width = '20%';
+        document.getElementById('loading-fill').style.width = '10%';
 
         // Create renderer (OpenGL ES 3.0 via WebGL2, optimized for Android)
         const canvas = document.createElement('canvas');
@@ -43,7 +43,7 @@ const Game = {
         this.renderer.setClearColor(0x87CEEB);
         document.body.appendChild(this.renderer.domElement);
 
-        document.getElementById('loading-fill').style.width = '40%';
+        document.getElementById('loading-fill').style.width = '20%';
 
         // Create scene
         this.scene = new THREE.Scene();
@@ -51,9 +51,24 @@ const Game = {
 
         // Initialize controls
         Controls.init();
-        document.getElementById('loading-fill').style.width = '60%';
+        document.getElementById('loading-fill').style.width = '30%';
 
-        // Initialize player
+        // Initialize ModelLoader and preload models for this level
+        if (typeof ModelLoader !== 'undefined') {
+            ModelLoader.init();
+            // Determine world type for preloading
+            const data = this.levels[this.currentLevel];
+            const worldType = data ? data.world : 'forest';
+            ModelLoader.onProgress = (progress) => {
+                // Map model loading progress to 30%-70% of loading bar
+                const pct = 30 + Math.round(progress * 40);
+                document.getElementById('loading-fill').style.width = pct + '%';
+            };
+            await ModelLoader.preloadForLevel(worldType);
+        }
+        document.getElementById('loading-fill').style.width = '70%';
+
+        // Initialize player (after models are loaded so sword model is available)
         Player.init(this.scene);
         document.getElementById('loading-fill').style.width = '80%';
 
