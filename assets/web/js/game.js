@@ -148,6 +148,11 @@ const Game = {
         // Update world animations
         World.update(time);
 
+        // Update enemies
+        if (typeof EnemySystem !== 'undefined') {
+            EnemySystem.update(dt, time, Player.x, Player.y, Player.z);
+        }
+
         // Update player
         const result = Player.update(dt);
 
@@ -367,6 +372,9 @@ Game.levels[2] = {
         { x: 12, y: 1, z: 5, type: 'gem' },
         { x: 18, y: 1, z: 8, type: 'gem' },
         { x: 20, y: 1, z: 3, type: 'gem' },
+    ],
+    enemies: [
+        { x: 18, y: 1, z: 6, type: 'spider' },
     ]
 };
 
@@ -416,6 +424,10 @@ Game.levels[3] = {
         { x: 8, y: 1, z: 18, type: 'gem' },
         { x: 15, y: 1, z: 16, type: 'gem' },
         { x: 3, y: 1, z: 3, type: 'gem' },
+    ],
+    enemies: [
+        { x: 6, y: 1, z: 10, type: 'spider' },
+        { x: 16, y: 1, z: 12, type: 'spider' },
     ]
 };
 
@@ -450,6 +462,11 @@ Game.levels[4] = {
         { x: 15, y: 1, z: 3, type: 'gem' },
         { x: 18, y: 1, z: 5, type: 'gem' },
         { x: 23, y: 1, z: 8, type: 'potion' },
+    ],
+    enemies: [
+        { x: 5, y: 1, z: 3, type: 'spider' },
+        { x: 22, y: 1, z: 7, type: 'spider' },
+        { x: 25, y: 1, z: 4, type: 'spider' },
     ]
 };
 
@@ -479,6 +496,11 @@ Game.levels[5] = {
         { x: 3, y: 1, z: 8, type: 'gem' },
         { x: 14, y: 1, z: 8, type: 'gem' },
         { x: 8, y: 1, z: 14, type: 'potion' },
+    ],
+    enemies: [
+        { x: 9, y: 1, z: 5, type: 'tree_boss' },
+        { x: 4, y: 1, z: 14, type: 'spider' },
+        { x: 14, y: 1, z: 14, type: 'spider' },
     ]
 };
 
@@ -511,6 +533,10 @@ Game.levels[6] = {
         { x: 12, y: 5, z: 9, type: 'gem' },
         { x: 16, y: 7, z: 13, type: 'gem' },
         { x: 14, y: 6, z: 11, type: 'potion' },
+    ],
+    enemies: [
+        { x: 3, y: 1, z: 4, type: 'ghost' },
+        { x: 12, y: 4, z: 10, type: 'ghost' },
     ]
 };
 
@@ -546,6 +572,11 @@ Game.levels[7] = {
         { x: 13, y: 1, z: 3, type: 'gem' },
         { x: 18, y: 1, z: 12, type: 'gem' },
         { x: 20, y: 1, z: 5, type: 'gem' },
+    ],
+    enemies: [
+        { x: 7, y: 1, z: 4, type: 'ghost' },
+        { x: 12, y: 1, z: 10, type: 'skeleton' },
+        { x: 19, y: 1, z: 7, type: 'ghost' },
     ]
 };
 
@@ -573,6 +604,11 @@ Game.levels[8] = {
         { x: 9, y: 1, z: 4, type: 'potion' },
         { x: 22, y: 1, z: 5, type: 'gem' },
         { x: 26, y: 1, z: 5, type: 'gem' },
+    ],
+    enemies: [
+        { x: 10, y: 1, z: 5, type: 'skeleton' },
+        { x: 16, y: 1, z: 4, type: 'skeleton' },
+        { x: 25, y: 1, z: 5, type: 'ghost' },
     ]
 };
 
@@ -605,6 +641,11 @@ Game.levels[9] = {
         { x: 12, y: 1, z: 5, type: 'gem' },
         { x: 17, y: 1, z: 6, type: 'gem' },
         { x: 20, y: 1, z: 8, type: 'potion' },
+    ],
+    enemies: [
+        { x: 6, y: 1, z: 7, type: 'ghost' },
+        { x: 13, y: 1, z: 6, type: 'ghost' },
+        { x: 18, y: 1, z: 7, type: 'skeleton' },
     ]
 };
 
@@ -634,6 +675,11 @@ Game.levels[10] = {
         { x: 16, y: 1, z: 10, type: 'gem' },
         { x: 10, y: 1, z: 3, type: 'potion' },
         { x: 10, y: 1, z: 16, type: 'gem' },
+    ],
+    enemies: [
+        { x: 10, y: 1, z: 5, type: 'ice_dragon' },
+        { x: 4, y: 1, z: 10, type: 'ghost' },
+        { x: 16, y: 1, z: 10, type: 'ghost' },
     ]
 };
 
@@ -669,6 +715,10 @@ Game.levels[11] = {
         { x: 11, y: 5, z: 10, type: 'gem' },
         { x: 15, y: 3, z: 14, type: 'gem' },
         { x: 18, y: 2, z: 16, type: 'potion' },
+    ],
+    enemies: [
+        { x: 5, y: 8, z: 5, type: 'skeleton' },
+        { x: 13, y: 3, z: 12, type: 'skeleton' },
     ]
 };
 
@@ -707,6 +757,12 @@ Game.levels[12] = {
         { x: 15, y: 1, z: 10, type: 'gem' },
         { x: 22, y: 1, z: 5, type: 'gem' },
         { x: 14, y: 1, z: 6, type: 'potion' },
+    ],
+    enemies: [
+        { x: 3, y: 1, z: 10, type: 'skeleton' },
+        { x: 9, y: 1, z: 7, type: 'skeleton' },
+        { x: 15, y: 1, z: 4, type: 'skeleton' },
+        { x: 22, y: 1, z: 10, type: 'spider' },
     ]
 };
 
@@ -741,6 +797,12 @@ Game.levels[13] = {
         { x: 18, y: 1, z: 18, type: 'gem' },
         { x: 10, y: 3, z: 10, type: 'gem' },
         { x: 10, y: 1, z: 10, type: 'potion' },
+    ],
+    enemies: [
+        { x: 8, y: 1, z: 4, type: 'skeleton' },
+        { x: 16, y: 1, z: 12, type: 'spider' },
+        { x: 4, y: 1, z: 16, type: 'skeleton' },
+        { x: 14, y: 1, z: 18, type: 'spider' },
     ]
 };
 
@@ -778,6 +840,11 @@ Game.levels[14] = {
         { x: 17, y: 1, z: 10, type: 'gem' },
         { x: 12, y: 3, z: 8, type: 'gem' },
         { x: 3, y: 1, z: 8, type: 'potion' },
+    ],
+    enemies: [
+        { x: 5, y: 1, z: 7, type: 'skeleton' },
+        { x: 16, y: 1, z: 8, type: 'skeleton' },
+        { x: 12, y: 1, z: 12, type: 'spider' },
     ]
 };
 
@@ -807,6 +874,11 @@ Game.levels[15] = {
         { x: 14, y: 1, z: 10, type: 'gem' },
         { x: 10, y: 1, z: 5, type: 'potion' },
         { x: 10, y: 1, z: 15, type: 'gem' },
+    ],
+    enemies: [
+        { x: 10, y: 1, z: 10, type: 'lava_demon' },
+        { x: 5, y: 1, z: 5, type: 'skeleton' },
+        { x: 15, y: 1, z: 15, type: 'skeleton' },
     ]
 };
 
@@ -841,6 +913,12 @@ Game.levels[16] = {
         { x: 14, y: 1, z: 8, type: 'gem' },
         { x: 18, y: 1, z: 14, type: 'gem' },
         { x: 16, y: 1, z: 3, type: 'potion' },
+    ],
+    enemies: [
+        { x: 7, y: 1, z: 3, type: 'skeleton' },
+        { x: 15, y: 1, z: 10, type: 'skeleton' },
+        { x: 20, y: 1, z: 8, type: 'ghost' },
+        { x: 18, y: 1, z: 12, type: 'skeleton' },
     ]
 };
 
@@ -874,6 +952,13 @@ Game.levels[17] = {
         { x: 11, y: 1, z: 15, type: 'key' },
         { x: 14, y: 1, z: 3, type: 'gem' },
         { x: 17, y: 1, z: 12, type: 'potion' },
+    ],
+    enemies: [
+        { x: 2, y: 1, z: 5, type: 'ghost' },
+        { x: 5, y: 1, z: 10, type: 'skeleton' },
+        { x: 8, y: 1, z: 12, type: 'ghost' },
+        { x: 11, y: 1, z: 5, type: 'skeleton' },
+        { x: 16, y: 1, z: 8, type: 'ghost' },
     ]
 };
 
@@ -912,6 +997,13 @@ Game.levels[18] = {
         { x: 8, y: 1, z: 15, type: 'gem' },
         { x: 9, y: 1, z: 2, type: 'potion' },
         { x: 14, y: 1, z: 20, type: 'potion' },
+    ],
+    enemies: [
+        { x: 5, y: 1, z: 6, type: 'skeleton' },
+        { x: 13, y: 1, z: 8, type: 'skeleton' },
+        { x: 9, y: 1, z: 16, type: 'ghost' },
+        { x: 5, y: 1, z: 20, type: 'skeleton' },
+        { x: 13, y: 1, z: 20, type: 'skeleton' },
     ]
 };
 
@@ -944,6 +1036,13 @@ Game.levels[19] = {
         { x: 16, y: 1, z: 10, type: 'gem' },
         { x: 10, y: 1, z: 16, type: 'potion' },
         { x: 10, y: 1, z: 3, type: 'potion' },
+    ],
+    enemies: [
+        { x: 10, y: 1, z: 10, type: 'dark_lord' },
+        { x: 4, y: 1, z: 4, type: 'skeleton' },
+        { x: 16, y: 1, z: 4, type: 'ghost' },
+        { x: 4, y: 1, z: 16, type: 'ghost' },
+        { x: 16, y: 1, z: 16, type: 'skeleton' },
     ]
 };
 
@@ -984,6 +1083,15 @@ Game.levels[20] = {
         { x: 3, y: 3, z: 9, type: 'gem' },
         { x: 12, y: 1, z: 8, type: 'potion' },
         { x: 12, y: 1, z: 18, type: 'potion' },
+    ],
+    enemies: [
+        { x: 12, y: 1, z: 5, type: 'dark_lord' },
+        { x: 20, y: 1, z: 10, type: 'skeleton' },
+        { x: 17, y: 1, z: 20, type: 'ghost' },
+        { x: 6, y: 1, z: 20, type: 'skeleton' },
+        { x: 3, y: 1, z: 10, type: 'ghost' },
+        { x: 8, y: 1, z: 8, type: 'skeleton' },
+        { x: 16, y: 1, z: 16, type: 'skeleton' },
     ]
 };
 

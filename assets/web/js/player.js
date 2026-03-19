@@ -30,11 +30,13 @@ const Player = {
     gemsCollected: 0,
     totalGems: 0,
     isAlive: true,
+    lastDamageTime: 0,
 
     // Hand weapon (shown on screen)
     handGroup: null,
     handSwing: 0,
     isAttacking: false,
+    hasHitThisSwing: false,
 
     init(scene) {
         // Create camera
@@ -208,15 +210,27 @@ const Player = {
         if (Controls.attackPressed && !this.isAttacking) {
             this.isAttacking = true;
             this.handSwing = 0;
+            this.hasHitThisSwing = false;
         }
         if (this.isAttacking) {
             this.handSwing += dt * 8;
             if (this.handSwing < Math.PI) {
                 this.handGroup.rotation.x = -Math.sin(this.handSwing) * 0.8;
+
+                // Check for enemy hits at the peak of the swing
+                if (!this.hasHitThisSwing && this.handSwing > Math.PI * 0.3 && this.handSwing < Math.PI * 0.7) {
+                    if (typeof EnemySystem !== 'undefined') {
+                        const hit = EnemySystem.checkPlayerAttack(
+                            this.x, this.y, this.z, this.rotX, 2.5
+                        );
+                        if (hit) this.hasHitThisSwing = true;
+                    }
+                }
             } else {
                 this.handGroup.rotation.x = 0;
                 this.isAttacking = false;
                 this.handSwing = 0;
+                this.hasHitThisSwing = false;
             }
         } else {
             // Idle hand bob
@@ -224,6 +238,37 @@ const Player = {
             const bobAmount = Controls.isMoving ? 0.03 : 0.01;
             const bobSpeed = Controls.isMoving ? 6 : 2;
             this.handGroup.position.y = -0.35 + Math.sin(time * bobSpeed) * bobAmount;
+        }
+
+        // ---- Contact Damage from Enemies ----
+        if (typeof EnemySystem !== 'undefined') {
+            const contactDmg = EnemySystem.checkContactDamage(this.x, this.y, this.z, this.radius);
+            if (contactDmg > 0) {
+                const now = performance.now() / 1000;
+                if (now - this.lastDamageTime > 1.0) {
+                    this.lastDamageTime = now;
+                    this.takeDamage(contactDmg);
+                    // Knockback away from nearest enemy
+                    let closestDist = Infinity;
+                    let kbx = 0, kbz = 0;
+                    for (const e of EnemySystem.enemies) {
+                        if (!e.isAlive) continue;
+                        const edx = this.x - e.x;
+                        const edz = this.z - e.z;
+                        const ed = Math.sqrt(edx*edx + edz*edz);
+                        if (ed < closestDist) {
+                            closestDist = ed;
+                            kbx = edx; kbz = edz;
+                        }
+                    }
+                    if (closestDist < Infinity && closestDist > 0) {
+                        this.vx = (kbx / closestDist) * 5;
+                        this.vz = (kbz / closestDist) * 5;
+                    }
+                    // Damage screen flash
+                    this._damageFlash();
+                }
+            }
         }
 
         // ---- Check Collectibles ----
@@ -258,12 +303,27 @@ const Player = {
     takeDamage(amount) {
         this.health -= amount;
         this.updateHealthUI();
+        this._damageFlash();
 
         if (this.health <= 0) {
             this.isAlive = false;
             return 'game_over';
         }
         return null;
+    },
+
+    _damageFlash() {
+        let flash = document.getElementById('damage-flash');
+        if (!flash) {
+            flash = document.createElement('div');
+            flash.id = 'damage-flash';
+            flash.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;' +
+                'background:rgba(255,0,0,0.3);pointer-events:none;z-index:50;' +
+                'opacity:0;transition:opacity 0.4s;';
+            document.body.appendChild(flash);
+        }
+        flash.style.opacity = '1';
+        setTimeout(() => { flash.style.opacity = '0'; }, 100);
     },
 
     updateHealthUI() {

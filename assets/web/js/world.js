@@ -175,6 +175,11 @@ const World = {
         this.items = [];
         this.enemies = [];
 
+        // Clear enemy system
+        if (typeof EnemySystem !== 'undefined') {
+            EnemySystem.clear(scene);
+        }
+
         // Set world atmosphere
         const sky = this.skyColors[levelData.world] || this.skyColors['forest'];
         scene.background = new THREE.Color(sky.top);
@@ -212,6 +217,13 @@ const World = {
 
         // Add ambient lighting
         this.addLighting(scene, levelData.world);
+
+        // Spawn enemies
+        if (typeof EnemySystem !== 'undefined' && levelData.enemies) {
+            levelData.enemies.forEach(enemyData => {
+                EnemySystem.createEnemy(scene, enemyData);
+            });
+        }
 
         // Add environment decoration models
         if (typeof ModelLoader !== 'undefined') {

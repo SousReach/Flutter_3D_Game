@@ -57,6 +57,7 @@ class _GameScreenState extends State<GameScreen> {
     final threeJs = await rootBundle.loadString('assets/web/js/three.min.js');
     final controlsJs = await rootBundle.loadString('assets/web/js/controls.js');
     final worldJs = await rootBundle.loadString('assets/web/js/world.js');
+    final enemyJs = await rootBundle.loadString('assets/web/js/enemy.js');
     final playerJs = await rootBundle.loadString('assets/web/js/player.js');
     final gameJsRaw = await rootBundle.loadString('assets/web/js/game.js');
 
@@ -196,6 +197,7 @@ class _GameScreenState extends State<GameScreen> {
     <script>$threeJs</script>
     <script>$controlsJs</script>
     <script>$worldJs</script>
+    <script>$enemyJs</script>
     <script>$playerJs</script>
     <script>$gameJs</script>
 </body>
